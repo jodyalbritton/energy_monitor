@@ -1,0 +1,26 @@
+<h2>Listing Connectors</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Access token</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for connector <- @connectors do %>
+    <tr>
+      <td><%= connector.access_token %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: connector_path(@conn, :show, connector), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: connector_path(@conn, :edit, connector), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: connector_path(@conn, :delete, connector), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Connector", to: connector_path(@conn, :new) %></span>

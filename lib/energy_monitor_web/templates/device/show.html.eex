@@ -1,0 +1,28 @@
+<h2>Show Device</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @device.name %>
+  </li>
+
+  <li>
+    <strong>Label:</strong>
+    <%= @device.label %>
+  </li>
+
+  <li>
+    <strong>Device:</strong>
+    <%= @device.device_id %>
+  </li>
+
+  <li>
+    <strong>Location:</strong>
+    <%= @device.location_id %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: device_path(@conn, :edit, @device) %></span>
+<span><%= link "Back", to: device_path(@conn, :index) %></span>

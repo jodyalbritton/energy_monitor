@@ -1,0 +1,49 @@
+<h2>Show Connector</h2>
+
+<ul>
+
+  <li>
+    <strong>Access token:</strong>
+    <%= @connector.access_token %>
+  </li>
+
+  <li>
+    <strong>Application Name:</strong>
+    <%= @connector.app_name %>
+  </li>
+
+
+  <li>
+    <strong>SmartThings App ID:</strong>
+    <%= @connector.app_id %>
+  </li>
+
+  <li>
+    <strong>Application Label:</strong>
+    <%= @connector.display_name %>
+  </li>
+
+  <li>
+    <strong>Application Name:</strong>
+    <%= @connector.app_name %>
+  </li>
+
+  <li>
+    <strong>Target Url:</strong>
+    <%= @connector.target_url %>
+  </li>
+
+  <li>
+    <strong>Last Updated:</strong>
+    <%= @connector.last_updated_date %>
+  </li>
+
+  <li>
+    <strong>RSA PUB:</strong>
+    <%= @connector.rsa_pub %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: connector_path(@conn, :edit, @connector) %></span>
+<span><%= link "Back", to: connector_path(@conn, :index) %></span>

@@ -1,0 +1,5 @@
+<h2>New Connector</h2>
+
+<%= render "form.html", Map.put(assigns, :action, connector_path(@conn, :create)) %>
+
+<span><%= link "Back", to: connector_path(@conn, :index) %></span>

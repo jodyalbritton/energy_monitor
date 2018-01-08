@@ -1,0 +1,26 @@
+<h2>Listing Devices</h2>
+
+<a class="btn btn-primary float-right" href="#" role="button">Import</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Label</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for device <- @devices do %>
+    <tr>
+      <td><%= device.name %></td>
+      <td><%= device.label %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: device_path(@conn, :show, device), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: device_path(@conn, :edit, device), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: device_path(@conn, :delete, device), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
