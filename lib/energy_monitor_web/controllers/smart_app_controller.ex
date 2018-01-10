@@ -8,23 +8,35 @@ defmodule EnergyMonitorWeb.SmartAppController do
 
 
   def handle_request(conn, params) do
+
       case params["lifecycle"] do
         "PING" ->
           render conn, "ping.json", params: params
         "CONFIGURATION" ->
-          render conn, "configure.json", params: params
+          IO.inspect params
+          case params["configurationData"]["phase"] do
+            "INITIALIZE" ->
+              render conn, "init.json", params: params
+            "PAGE" ->
+              render conn, "page.json", params: params
+            _->
+              render conn, "unhandled.json", params: params
+          end
         "INSTALL" ->
           render conn, "install.json", params: params
         "UPDATE" ->
-          render conn, "index.json", params: params
+          render conn, "update.json", params: params
         "UNINSTALL" ->
-          render conn, "index.json", params: params
+          render conn, "uninstall.json", params: params
         "EVENT" ->
-          render conn, "index.json", params: params
+          render conn, "event.json", params: params
         _ ->
           render conn, "unhandled.json", params: params
       end
   end
+
+
+
 
 
 end

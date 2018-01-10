@@ -71,6 +71,8 @@ defmodule EnergyMonitor.Accounts do
 
   """
   def update_connector(%Connector{} = connector, attrs) do
+
+    update_smartapp(connector)
     connector
     |> Connector.changeset(attrs)
     |> Repo.update()
@@ -261,6 +263,8 @@ a
       )
     IO.inspect new_app
 
+    Stex.Apps.set_auth_scopes(client, new_app.app)
+
     connector
     |> Ecto.Changeset.put_change(:rsa_pub, new_app.app.webhookSmartApp.publicKey)
     |> Ecto.Changeset.put_change(:app_id, new_app.app.appId)
@@ -270,7 +274,15 @@ a
   end
 
 
+  def update_smartapp(connector) do
+    client = Stex.connect(connector.access_token)
+    Stex.Apps.updateWebhookSmartApp(client, connector)
+  end
+
+
   def delete_smartapp(connector) do
+    IO.puts "deleting SmartApp"
+    IO.inspect connector
     if connector.app_id do
       client = Stex.connect(connector.access_token)
       Stex.Apps.delete(client, connector.app_id)

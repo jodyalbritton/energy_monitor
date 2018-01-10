@@ -12,7 +12,20 @@ defmodule EnergyMonitorWeb.SmartAppView do
   end
 
   def render("install.json", params) do
-      %{}
+      IO.puts "INSTALL PHASE"
+      %{statusCode: 200, installData: %{}}
+  end
+
+
+  def render("update.json", params) do
+      IO.puts "UPDATE PHASE"
+      %{statusCode: 200, installData: %{}}
+  end
+
+
+  def render("uninstall.json", params) do
+      IO.puts "UNINSTALL PHASE"
+      %{statusCode: 200, installData: %{}}
   end
 
 
@@ -23,15 +36,71 @@ defmodule EnergyMonitorWeb.SmartAppView do
     }
   end
 
-
-  def render("configure.json", params) do
+  def render("event.json", params) do
+    IO.puts "Event Lifecycle"
     %{
-      name: "ST Connector",
-      description: "This is a sample",
-      id: "App",
-      firstPageId: "1"
-
+      statusCode: 200
     }
+  end
+
+  def render("init.json", params) do
+    IO.puts "LIFECYCLE PHASE: Config Init"
+
+    %{
+        statusCode: 200,
+        configurationData: %{
+          initialize: %{
+            name: "ST Connector",
+            description: "This and That",
+            id: "app",
+            permissions: [],
+            firstPageId: "1"
+          }
+        }
+    }
+  end
+
+  def render("page.json", params) do
+    IO.puts "LIFECYCLE PHASE: Config Page"
+
+    %{
+        statusCode: 200,
+        configurationData: %{
+          page: %{
+            pageId: "1",
+            name: "Monitor These Energy Devices",
+            nextPageId: "",
+            previousPageId: "",
+            complete: true,
+            sections: [
+              %{
+                name: "Monitor These",
+                settings: [
+                  %{
+                    id: "energyMeter",
+                    name: "Which Energy Meters",
+                    description: "Tap to set...",
+                    type: "DEVICE",
+                    required: false,
+                    multiple: true,
+                    capabilities: [
+                      "energyMeter"
+                    ],
+                    permissions: [
+                      "r"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+    }
+  end
+
+  def render("undefinedLifeCycle.json", params) do
+    IO.puts "Undefined Lifecycle"
+    %{}
   end
 
 
