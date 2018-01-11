@@ -128,4 +128,76 @@ defmodule EnergyMonitor.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_device(device)
     end
   end
+
+  describe "events" do
+    alias EnergyMonitor.Accounts.Event
+
+    @valid_attrs %{attribute: "some attribute", capability: "some capability", device_uuid: "some device_uuid", event_id: "some event_id", location_id: "some location_id", state_change: true, value: 120.5}
+    @update_attrs %{attribute: "some updated attribute", capability: "some updated capability", device_uuid: "some updated device_uuid", event_id: "some updated event_id", location_id: "some updated location_id", state_change: false, value: 456.7}
+    @invalid_attrs %{attribute: nil, capability: nil, device_uuid: nil, event_id: nil, location_id: nil, state_change: nil, value: nil}
+
+    def event_fixture(attrs \\ %{}) do
+      {:ok, event} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_event()
+
+      event
+    end
+
+    test "list_events/0 returns all events" do
+      event = event_fixture()
+      assert Accounts.list_events() == [event]
+    end
+
+    test "get_event!/1 returns the event with given id" do
+      event = event_fixture()
+      assert Accounts.get_event!(event.id) == event
+    end
+
+    test "create_event/1 with valid data creates a event" do
+      assert {:ok, %Event{} = event} = Accounts.create_event(@valid_attrs)
+      assert event.attribute == "some attribute"
+      assert event.capability == "some capability"
+      assert event.device_uuid == "some device_uuid"
+      assert event.event_id == "some event_id"
+      assert event.location_id == "some location_id"
+      assert event.state_change == true
+      assert event.value == 120.5
+    end
+
+    test "create_event/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_event(@invalid_attrs)
+    end
+
+    test "update_event/2 with valid data updates the event" do
+      event = event_fixture()
+      assert {:ok, event} = Accounts.update_event(event, @update_attrs)
+      assert %Event{} = event
+      assert event.attribute == "some updated attribute"
+      assert event.capability == "some updated capability"
+      assert event.device_uuid == "some updated device_uuid"
+      assert event.event_id == "some updated event_id"
+      assert event.location_id == "some updated location_id"
+      assert event.state_change == false
+      assert event.value == 456.7
+    end
+
+    test "update_event/2 with invalid data returns error changeset" do
+      event = event_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_event(event, @invalid_attrs)
+      assert event == Accounts.get_event!(event.id)
+    end
+
+    test "delete_event/1 deletes the event" do
+      event = event_fixture()
+      assert {:ok, %Event{}} = Accounts.delete_event(event)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_event!(event.id) end
+    end
+
+    test "change_event/1 returns a event changeset" do
+      event = event_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_event(event)
+    end
+  end
 end

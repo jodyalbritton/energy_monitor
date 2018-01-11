@@ -10,6 +10,7 @@ defmodule EnergyMonitor.Accounts.Device do
     field :location_id, :string
     field :name, :string
 
+    has_many :events, EnergyMonitor.Accounts.Event
     timestamps()
   end
 

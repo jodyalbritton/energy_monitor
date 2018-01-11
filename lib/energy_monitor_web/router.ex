@@ -21,6 +21,7 @@ defmodule EnergyMonitorWeb.Router do
 
     resources "/connectors", ConnectorController
     resources "/devices", DeviceController
+    resources "/events", EventController, except: [:new, :edit]
   end
 
 

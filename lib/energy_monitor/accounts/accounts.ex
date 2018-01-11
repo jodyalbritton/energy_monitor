@@ -8,6 +8,7 @@ defmodule EnergyMonitor.Accounts do
 
   alias EnergyMonitor.Accounts.Connector
   alias EnergyMonitor.Accounts.Device
+    alias EnergyMonitor.Accounts.Event
 
   @doc """
   Returns the list of connectors.
@@ -127,25 +128,21 @@ defmodule EnergyMonitor.Accounts do
   @doc """
   Import Devices from SmartThings
   """
-  def import_devices do
-    connections = list_connectors()
-    for connector <- connections do
-      client = Stex.connect(connector.access_token)
-      devices = Stex.Devices.list(client) |> Stex.Devices.filter_devices_by_capability("energyMeter")
+  def import_devices(access_token, devices) do
+      client = Stex.connect(access_token)
 
       for device <- devices do
+        device = Stex.Devices.show(client, device["deviceConfig"]["deviceId"])
         new_device = %{
-          name: device.name,
-          label: device.label,
-          device_id: device.deviceId,
-          location_id: device.locationId
+          name: device.device.name,
+          label: device.device.label,
+          device_id: device.device.deviceId,
+          location_id: device.device.locationId
 
         }
 
         create_or_update_device(new_device)
       end
-
-    end
   end
 
   @doc """
@@ -239,10 +236,8 @@ defmodule EnergyMonitor.Accounts do
   Returns an `%Ecto.Changeset{}` for tracking device changes.
 
   ## Examples
-
       iex> change_device(device)
       %Ecto.Changeset{source: %Device{}}
-a
   """
   def change_device(%Device{} = device) do
     Device.changeset(device, %{})
@@ -268,17 +263,45 @@ a
     connector
     |> Ecto.Changeset.put_change(:rsa_pub, new_app.app.webhookSmartApp.publicKey)
     |> Ecto.Changeset.put_change(:app_id, new_app.app.appId)
-
-
-
   end
 
 
+  @doc """
+  Create Subscriptions
+  """
+  def create_app_subscriptions(access_token, app_id, devices) do
+    client = Stex.connect(access_token)
+
+    for device <- devices do
+      Stex.Subscriptions.createSubscription(
+        client,
+        app_id,
+        device["deviceConfig"]["deviceId"],
+        "main",
+        "energyMeter",
+        "energy",
+        false,
+        "*"
+        )
+    end
+
+  end
+
+  @doc """
+  Update an installed smartapp
+  """
   def update_smartapp(connector) do
     client = Stex.connect(connector.access_token)
     Stex.Apps.updateWebhookSmartApp(client, connector)
   end
 
+  @doc """
+  Delete installapps subscriptions
+  """
+  def delete_app_subscriptions(access_token, app_id) do
+    client = Stex.connect(access_token)
+    Stex.Subscriptions.deleteSubscriptions(client, app_id)
+  end
 
   def delete_smartapp(connector) do
     IO.puts "deleting SmartApp"
@@ -287,5 +310,101 @@ a
       client = Stex.connect(connector.access_token)
       Stex.Apps.delete(client, connector.app_id)
     end
+  end
+
+
+
+  @doc """
+  Returns the list of events.
+
+  ## Examples
+
+      iex> list_events()
+      [%Event{}, ...]
+
+  """
+  def list_events do
+    Repo.all(Event)
+  end
+
+  @doc """
+  Gets a single event.
+
+  Raises `Ecto.NoResultsError` if the Event does not exist.
+
+  ## Examples
+
+      iex> get_event!(123)
+      %Event{}
+
+      iex> get_event!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_event!(id), do: Repo.get!(Event, id)
+
+  @doc """
+  Creates a event.
+
+  ## Examples
+
+      iex> create_event(%{field: value})
+      {:ok, %Event{}}
+
+      iex> create_event(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_event(attrs \\ %{}) do
+    %Event{}
+    |> Event.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a event.
+
+  ## Examples
+
+      iex> update_event(event, %{field: new_value})
+      {:ok, %Event{}}
+
+      iex> update_event(event, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_event(%Event{} = event, attrs) do
+    event
+    |> Event.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Event.
+
+  ## Examples
+
+      iex> delete_event(event)
+      {:ok, %Event{}}
+
+      iex> delete_event(event)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_event(%Event{} = event) do
+    Repo.delete(event)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking event changes.
+
+  ## Examples
+
+      iex> change_event(event)
+      %Ecto.Changeset{source: %Event{}}
+
+  """
+  def change_event(%Event{} = event) do
+    Event.changeset(event, %{})
   end
 end

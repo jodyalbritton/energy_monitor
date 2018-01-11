@@ -1,6 +1,5 @@
 <h2>Listing Devices</h2>
 
-<a class="btn btn-primary float-right" href="#" role="button">Import</a>
 <table class="table table-striped">
   <thead>
     <tr>
